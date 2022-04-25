@@ -29,7 +29,7 @@ function Create(props) {
             client: token
         };
         ApiInterface.post("/meds", payload).then((result) => {
-            navigate('/listMeds', { replace: true })
+            navigate(process.env.REACT_APP_ROUTING_PREFIX + "/listMeds" , { replace: true })
         });
     }
 
@@ -83,7 +83,7 @@ function Create(props) {
             <Card.Footer className='text-center'>
                 
             <Button className='m-1 mt-3' onClick={() => save()}>Salvar</Button>
-                    <Link to={`/listMeds`}>
+                    <Link to={process.env.REACT_APP_ROUTING_PREFIX + "/listMeds"} >
                         <Button variant="danger" className='m-1 mt-3'>Cancelar</Button>
                     </Link>
             </Card.Footer>

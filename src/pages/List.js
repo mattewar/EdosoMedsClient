@@ -15,12 +15,11 @@ function List(props) {
 
     function logout() {
         RemoveToken();
-        navigate('/', { replace: true })
+        navigate(process.env.REACT_APP_ROUTING_PREFIX + "/" , { replace: true })
     }
 
     function handleRemove(id) {
         setToRemoveId(id)
-        console.log(id)
         setShow(true)
     }
 
@@ -35,7 +34,6 @@ function List(props) {
     useEffect(() => {
         ApiInterface.get("/meds?id=" + token).then((result) => {
             setMeds(result.data)
-            console.log(result.data)
         });
     }, [toRemoveId, token])
 
@@ -70,7 +68,7 @@ function List(props) {
                 </tbody>
             </Table>
 
-            <Link to={`/createMeds`}>
+            <Link to={process.env.REACT_APP_ROUTING_PREFIX + "/createMeds"} >
                 <Button type="submit" className='m-1'>Novo</Button>
             </Link>
             <Button variant="danger" className='m-1' onClick={() => logout()}>Sair</Button>

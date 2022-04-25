@@ -15,9 +15,9 @@ function Routes() {
     <Router>
       <LayoutDefault>
         <Switch>
-          <Route key={2} path="/listMeds" element={<List/>} />
-          <Route key={3} path="/createMeds" element={<Create/>} />
-          <Route key={1} path="/" element={<Home/>} />
+          <Route key={2} path={process.env.REACT_APP_ROUTING_PREFIX + "/listMeds"} element={<List/>} />
+          <Route key={3} path={process.env.REACT_APP_ROUTING_PREFIX + "/createMeds"} element={<Create/>} />
+          <Route key={1} path={process.env.REACT_APP_ROUTING_PREFIX + "/"} element={<Home/>} />
         </Switch>
       </LayoutDefault>
       <Toast></Toast>

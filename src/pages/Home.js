@@ -10,7 +10,7 @@ function Home(props) {
 
     function submit() {
         SetToken(token);
-        navigate('/listMeds', {replace: true})
+        navigate(process.env.REACT_APP_ROUTING_PREFIX + "/listMeds" , {replace: true})
     }
     return (
         <Card className='p-3'>
