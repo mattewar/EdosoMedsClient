@@ -15,7 +15,7 @@ function List(props) {
 
     function logout() {
         RemoveToken();
-        navigate(process.env.REACT_APP_ROUTING_PREFIX + "/" , { replace: true })
+        navigate(process.env.REACT_APP_ROUTING_PREFIX + "/", { replace: true })
     }
 
     function handleRemove(id) {
@@ -33,6 +33,7 @@ function List(props) {
 
     useEffect(() => {
         ApiInterface.get("/meds?id=" + token).then((result) => {
+            console.log(result.data)
             setMeds(result.data)
         });
     }, [toRemoveId, token])
@@ -42,11 +43,10 @@ function List(props) {
             <Table striped bordered hover>
                 <thead>
                     <tr>
+                        <th>Remédio</th>
                         <th>Nome</th>
-                        <th>Data Inicio</th>
-                        <th>Data Fim</th>
                         <th>Horário</th>
-                        <th>Vezes por dia</th>
+                        <th>Repetir a cada x horas</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -55,9 +55,8 @@ function List(props) {
                         meds.length > 0 && meds.map(item => {
                             return (
                                 <tr>
+                                    <td><img width={50} height={50} src={"http://localhost:3000/public/" + item.imageName} alt="sem imagem"/></td>
                                     <td>{item.name}</td>
-                                    <td>{new Date(item.startDate).toLocaleString("pt-BR",{day:"numeric",month:"numeric",year:"numeric"})}</td>
-                                    <td>{new Date(item.endDate).toLocaleString("pt-BR",{day:"numeric",month:"numeric",year:"numeric"})}</td>
                                     <td>{item.time}</td>
                                     <td>{item.repeat}</td>
                                     <td><Button onClick={() => handleRemove(item._id)} variant="danger" >Deletar</Button></td>

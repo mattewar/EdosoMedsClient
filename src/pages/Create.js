@@ -3,35 +3,37 @@ import { Card, Button, Form } from 'react-bootstrap'
 import { useNavigate, Link } from 'react-router-dom'
 import ApiInterface from '../interface/ApiInterface';
 import { GetToken } from '../interface/CookieInterface';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css"
-import { registerLocale, setDefaultLocale } from  "react-datepicker";
-import pt from 'date-fns/locale/pt';
+import TimePicker from 'react-time-picker';
 
 function Create(props) {
-    registerLocale('pt', pt)
     const navigate = useNavigate();
-    const today = new Date();
     const [name, setName] = useState()
-    const [startDate, setStartDate] = useState(today)
-    const [endDate, setEndDate] = useState()
     const [time, setTime] = useState()
     const [repeat, setRepeat] = useState()
+    const [image, setImage] = useState()
+    const [imageName, setImageName] = useState()
     const token = GetToken();
 
-    function save() {
+    async function save() {
+        console.log(image)
         const payload = {
             name: name,
-            startDate: startDate,
-            endDate: endDate,
             time: time,
             repeat: repeat,
-            client: token
+            client: token,
+            image: await toBase64(image),
+            imageName: imageName
         };
         ApiInterface.post("/meds", payload).then((result) => {
-            navigate(process.env.REACT_APP_ROUTING_PREFIX + "/listMeds" , { replace: true })
+            navigate(process.env.REACT_APP_ROUTING_PREFIX + "/listMeds", { replace: true })
         });
     }
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 
     return (
         <Card className='p-3 new-med-card'>
@@ -40,64 +42,33 @@ function Create(props) {
             </Card.Title>
             <Card.Body>
                 <Form>
+                    <Form.Group controlId="formFile" className="mb-3">
+                        <Form.Label>Imagem</Form.Label>
+                        <Form.Control type="file" onChange={(e) => { setImage(e.target.files[0]); setImageName(e.target.value.split('\\').reverse()[0]) }}></Form.Control>
+                    </Form.Group>
                     <Form.Group>
-                        <Form.Label>Nome</Form.Label>
+                        <Form.Label>Nome do remédio</Form.Label>
                         <Form.Control value={name} onChange={(e) => setName(e.target.value)}></Form.Control>
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Data Inicial</Form.Label>
-                        <DatePicker
-                            onChange={(e) => setStartDate(e)}
-                            minDate={today}
-                            locale="pt"
-                            selected={startDate}
-                            dateFormat="dd/MM/yyyy"
-                            customInput={
-                                <Form.Control value={startDate}></Form.Control>
-                            }>
-                        </DatePicker>
+                        <Form.Label>Horário de tomar o remédio</Form.Label>
+                        <TimePicker onChange={setTime} value={time} />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Data Final</Form.Label>
-                        <DatePicker
-                            onChange={(e) => setEndDate(e)}
-                            minDate={startDate}
-                            locale="pt"
-                            selected={endDate}
-                            dateFormat="dd/MM/yyyy"
-                            customInput={
-                                <Form.Control value={endDate}></Form.Control>
-                            }>
-                        </DatePicker>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Horário</Form.Label>
-                        <Form.Control value={time} onChange={(e) => setTime(e.target.value)}></Form.Control>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Repetir</Form.Label>
-                        <Form.Control value={repeat} onChange={(e) => setRepeat(e.target.value)}></Form.Control>
+                        <Form.Label>Repetir a cada x horas</Form.Label>
+                        <Form.Control value={repeat} disableClock={true} onChange={(e) => setRepeat(e.target.value)}></Form.Control>
                     </Form.Group>
                 </Form>
             </Card.Body>
             <Card.Footer className='text-center'>
-                
-            <Button className='m-1 mt-3' onClick={() => save()}>Salvar</Button>
-                    <Link to={process.env.REACT_APP_ROUTING_PREFIX + "/listMeds"} >
-                        <Button variant="danger" className='m-1 mt-3'>Cancelar</Button>
-                    </Link>
+
+                <Button className='m-1 mt-3' onClick={() => save()}>Salvar</Button>
+                <Link to={process.env.REACT_APP_ROUTING_PREFIX + "/listMeds"} >
+                    <Button variant="danger" className='m-1 mt-3'>Cancelar</Button>
+                </Link>
             </Card.Footer>
         </Card>
     )
 
 }
 export default Create;
-
-
-
-
-// <th>Nome</th>
-// <th>Data Inicio</th>
-// <th>Data Fim</th>
-// <th>Horário</th>
-// <th>Vezes por dia</th>
